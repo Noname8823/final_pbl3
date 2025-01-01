@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lane Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #f0f4f8;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            position: relative;
+        }
+        header img {
+            height: 60px;
+            width: auto;
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            flex-grow: 1;
+            text-align: center;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+            margin: 10px 0 20px;
+        }
+        .container {
+            padding: 20px;
+            background: white;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .images-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .image-box {
+            text-align: center;
+            width: 48%;
+        }
+        .image-box img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button, input[type="file"] {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            z-index: 1000;
+            display: none;
+        }
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                document.getElementById('upload-form').submit();
+            }, 2000);
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to our LANE DETECTION Project</h1>
+        <img src="/static/logo.jpg" alt="Logo">
+    </header>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        Loading...
+    </div>
+    <div class="container">
+        <p><i> We use the PolyLaneNet deep learning model for real-time lane detection.</i></p>
+        <p><i>This technology is capable of identifying lane boundaries under various conditions, including curves and obstacles</i></p>
+        <p><i>applications in autonomous driving and advanced driver-assistance systems (ADAS).</i></p>
+      
+        
+        <p><b>User Guide:</b></p>
+        <div style="text-align: left; margin-left: 500px;">
+            <p>1. Upload an image by clicking the "Select File" button.</p>
+            <p>2. Press the "Upload" button to let the system process and detect lanes.</p>
+            <p>3. View the processed image results and optionally click "Download."</p>
+        </div>
+        
+        
+
+        
+        <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data" onsubmit="return showLoading()">
+            <input type="file" name="file" id="file-input" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        {% if uploaded_file and result_file %}
+            <div class="images-container">
+                <div class="image-box">
+                    <h2>Uploaded Image:</h2>
+                    <img src="/uploads/{{ uploaded_file }}" alt="Uploaded Image">
+                </div>
+                <div class="image-box">
+                    <h2>Detected Image:</h2>
+                    <img src="/results/{{ result_file }}" alt="Result Image">
+                </div>
+            </div>
+            <a href="/results/{{ result_file }}" download>
+                <button>Download</button>
+            </a>
+        {% endif %}
+    </div>
+</body>
+</html>
